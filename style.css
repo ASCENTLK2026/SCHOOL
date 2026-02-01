@@ -111,10 +111,10 @@ h1.poison-title {
 .cs-bar { width: 50px; height: 3px; background: var(--toxic); margin: 10px 0; }
 
 /* News Feed */
-#news-feed {
-    min-height: 150px; font-family: var(--font-ui);
-    color: rgba(255, 255, 255, 0.8); font-size: 0.95rem;
-    transition: opacity 0.5s ease-in-out; overflow: hidden;
+#news-feed p {
+    margin: 0; /* Removes the big default gap */
+    margin-bottom: 5px; /* Adds a tiny, clean space between lines */
+    line-height: 1.3; /* Makes the text block feel more cohesive */
 }
 #news-feed h3 { color: var(--toxic); margin: 0 0 10px 0; font-size: 1.1rem; letter-spacing: 1px; border-bottom: 1px dashed rgba(0, 255, 65, 0.3); padding-bottom: 5px; display: inline-block; }
 #news-feed ul { padding-left: 20px; list-style: none; }
