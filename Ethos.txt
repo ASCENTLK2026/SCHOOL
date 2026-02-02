@@ -2,7 +2,6 @@
   The containment field has been stabilized.
 - If you have any stories you want on this please contact Ethan.
 - If you have an issue with any stories here do the same.
-- Also Someone is Gay
 
 /l
 
@@ -14,5 +13,9 @@
 /l
 
 # COMMUNITY ALERT
-  Voting lines are now open.
-  Scan the QR code to cast your vote.
+  Voting lines are now open. Scan the QR code to cast your vote.
+
+/l
+
+# JAYATH IS BI
+  Ryan Prolly gave a Hicki.
