@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project TOXIC | ASCENT 2026</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,73 +13,67 @@
 
     <canvas id="smokeCanvas"></canvas>
 
-    <div class="container">
+    <div class="app-wrapper">
+        <div class="container">
+            <!-- MAIN CONTENT -->
+            <main class="glass-panel main-content">
+                <header class="header-logos">
+                    <div class="logo-badge">ASCENT 2026</div>
+                    <div class="logo-badge">SYSTEM.ROOT</div>
+                </header>
 
-        <main class="glass-panel main-content">
-
-            <header class="header-logos">
-                <div class="logo-badge">ASCENT 2026</div>
-                <div class="logo-badge">SYSTEM.ROOT</div>
-            </header>
-
-            <div class="hero-text">
-                <div style="color: var(--toxic); letter-spacing: 4px; font-weight: 700; margin-bottom: 10px; display:flex; align-items:center; gap:10px;">
-                    <div style="width:8px; height:8px; background:var(--toxic); border-radius:50%; box-shadow:0 0 10px var(--toxic);"></div>
-                    CONTAINMENT STABLE
-                </div>
-
-                <h1 class="poison-title">PROJECT<br>TOXIC</h1>
-
-                <div id="countdown">
-                    <div class="time-box">LOADING...</div>
-                </div>
-            </div>
-
-            <div class="footer-bar">
-                <div class="footer-info">
-                    <span>TARGET: 06 FEB 2026</span>
-                    <span class="aivance-credit">MADE BY AIVANCE</span>
-                </div>
-                <div class="progress-track"><div class="progress-fill"></div></div>
-            </div>
-
-        </main>
-
-        <aside class="sidebar">
-
-            <section class="glass-panel sidebar-section section-top">
-                <div class="section-header">LIVE VOTING</div>
-
-                <div id="poll-container" style="display:flex; flex-direction:column; height:100%;">
-
-                    <div id="qr-area" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; display:none;">
-                        <img id="qr-img" src="" alt="Scan to Vote" style="border: 4px solid var(--toxic); border-radius: 8px; width: 140px; height: 140px;">
-                        <p style="color:var(--toxic); letter-spacing:2px; margin-top:10px; font-weight:bold; font-size:1.2rem; animation: pulse-text 2s infinite;">SCAN TO VOTE</p>
+                <div class="hero-text">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        CONTAINMENT STABLE
                     </div>
 
-                    <div id="results-area" style="width:100%; margin-top:15px;">
-                        <p style="opacity:0.5; font-size:0.8rem;">> Loading Poll Data...</p>
-                    </div>
+                    <h1 class="poison-title">PROJECT<br>TOXIC</h1>
 
-                </div>
-            </section>
-
-            <section class="glass-panel sidebar-section section-bottom" style="justify-content: space-between;">
-                <div>
-                    <div class="section-header">COMMAND / NEWS</div>
-                    <div id="news-feed">
-                        <p>> Initializing Uplink...</p>
+                    <div id="countdown">
+                        <div class="time-box">LOADING...</div>
                     </div>
                 </div>
 
-                <div class="nav-controls">
-                    <button id="prevBtn" class="nav-btn">&lt; PREV</button>
-                    <button id="nextBtn" class="nav-btn">NEXT &gt;</button>
+                <div class="footer-bar">
+                    <div class="footer-info">
+                        <span>TARGET: 06 FEB 2026</span>
+                        <span class="aivance-credit">MADE BY AIVANCE</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill"></div></div>
                 </div>
-            </section>
+            </main>
 
-        </aside>
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <section class="glass-panel sidebar-section section-top">
+                    <div class="section-header">LIVE VOTING</div>
+                    <div id="poll-container">
+                        <div id="qr-area">
+                            <img id="qr-img" src="" alt="Scan to Vote">
+                            <p class="scan-text">SCAN TO VOTE</p>
+                        </div>
+                        <div id="results-area">
+                            <p class="loading-text">> Loading Poll Data...</p>
+                        </div>
+                    </div>
+                </section>
 
+                <section class="glass-panel sidebar-section section-bottom">
+                    <div class="news-content">
+                        <div class="section-header">COMMAND / NEWS</div>
+                        <div id="news-feed">
+                            <p>> Initializing Uplink...</p>
+                        </div>
+                    </div>
+
+                    <div class="nav-controls">
+                        <button id="prevBtn" class="nav-btn">&lt;</button>
+                        <button id="nextBtn" class="nav-btn">&gt;</button>
+                    </div>
+                </section>
+            </aside>
+        </div>
     </div>
 
     <script src="script.js"></script>
