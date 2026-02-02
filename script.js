@@ -29,21 +29,12 @@ async function initTicker() {
     try {
         const response = await fetch('News.txt?v=' + Date.now());
         const text = await response.text();
-        // Filter empty lines
         const items = text.split('\n').map(i => i.trim()).filter(i => i.length > 0);
-
-        // Create a separator
         const separator = "   <span>///</span>   ";
-
-        // Join items with separator
         const coreString = items.join(separator);
-
-        // DUPLICATE content for seamless looping (A + separator + A)
-        // CSS animates to -50%, perfectly resetting to the start of the second half
         const finalString = coreString + separator + coreString;
 
         const tickerEl = document.getElementById('newsTicker');
-        // Use innerHTML to allow the span tags for color
         tickerEl.innerHTML = finalString;
 
     } catch (e) { console.error("Ticker failed", e); }
@@ -68,7 +59,6 @@ async function fetchNews() {
                     html += `<h3>${cl.substring(2)}</h3>`;
                 }
                 else if (cl.startsWith('- ')) {
-                    // ADDED class "news-bullet" here
                     html += `<p class="news-bullet">• ${cl.substring(2)}</p>`;
                 }
                 else if (cl.length > 0) {
@@ -108,6 +98,14 @@ async function fetchPoll() {
 
         let options = [];
         lines.forEach(line => {
+            // NEW: Check for title in text file
+            if (line.startsWith('#')) {
+                const titleText = line.replace('#', '').trim();
+                const titleEl = document.getElementById('voting-title');
+                if (titleEl && titleEl.innerText !== titleText) {
+                    titleEl.innerText = titleText;
+                }
+            }
             if (line.startsWith('-')) {
                 const parts = line.replace('-', '').split('=');
                 options.push({ name: parts[0].trim(), count: parseInt(parts[1].trim()) || 0 });
@@ -116,7 +114,6 @@ async function fetchPoll() {
 
         const total = options.reduce((sum, item) => sum + item.count, 0);
         let html = '';
-        // Sort highest votes first
         options.sort((a,b) => b.count - a.count).forEach(opt => {
             const percent = total === 0 ? 0 : Math.round((opt.count / total) * 100);
             html += `
