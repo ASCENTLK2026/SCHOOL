@@ -1,7 +1,7 @@
 # BATTLE OF THE AGENTS
-- VIPER = 0
-- REYNA = 0
-- JETT = 0
-- BRIMSTONE = 0
+- VIPER = 3
+- REYNA = 1
+- JETT = 2
+- BRIMSTONE = 5
 
 6 . 2 . 2026 - 13:15
