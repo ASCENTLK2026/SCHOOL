@@ -16,11 +16,12 @@
 
 body {
     margin: 0; padding: 0;
-    height: 100vh; width: 100vw;
+    min-height: 100vh; width: 100vw;
     background-color: #010201;
     color: var(--text-main);
     font-family: var(--font-ui);
     overflow: auto; /* No scrolling on dashboard screens */
+    overflow-x: hidden;
 }
 
 #smokeCanvas {
