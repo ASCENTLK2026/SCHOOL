@@ -15,64 +15,78 @@
 
     <div class="app-wrapper">
         <div class="container">
-            <!-- MAIN CONTENT -->
+
             <main class="glass-panel main-content">
+                <div class="decorative-corner top-left"></div>
+                <div class="decorative-corner top-right"></div>
+                <div class="decorative-corner bottom-left"></div>
+                <div class="decorative-corner bottom-right"></div>
+
                 <header class="header-logos">
                     <div class="logo-badge">ASCENT 2026</div>
                     <div class="logo-badge">SYSTEM.ROOT</div>
+                    <div class="logo-badge" style="margin-left:auto">ID: ETH-026</div>
                 </header>
 
                 <div class="hero-text">
                     <div class="status-indicator">
                         <div class="status-dot"></div>
-                        CONTAINMENT STABLE
+                        CONTAINMENT STABLE // PROTOCOL ACTIVE
                     </div>
 
                     <h1 class="poison-title">PROJECT<br>TOXIC</h1>
 
-                    <div id="countdown">
+                    <div id="countdown" class="large-countdown">
                         <div class="time-box">LOADING...</div>
+                    </div>
+
+                    <div class="system-diagnostics">
+                        <div class="diag-item">
+                            <span class="diag-label">SERVER LOAD</span>
+                            <div class="diag-bar"><div class="diag-fill" style="width: 45%"></div></div>
+                        </div>
+                        <div class="diag-item">
+                            <span class="diag-label">NETWORK TRAFFIC</span>
+                            <div class="diag-bar"><div class="diag-fill" style="width: 82%"></div></div>
+                        </div>
+                        <div class="diag-item">
+                            <span class="diag-label">DATA INTEGRITY</span>
+                            <div class="diag-bar"><div class="diag-fill" style="width: 99%"></div></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="footer-bar">
-                    <div class="footer-info">
-                        <span>TARGET: 06 FEB 2026</span>
-                        <span class="aivance-credit">MADE BY AIVANCE</span>
-                    </div>
-                    <div class="progress-track"><div class="progress-fill"></div></div>
+                <div class="main-footer">
+                    TERMINAL V.2.0.4 | AUTHORIZED PERSONNEL ONLY
                 </div>
             </main>
 
-            <!-- SIDEBAR -->
             <aside class="sidebar">
                 <section class="glass-panel sidebar-section section-top">
-                    <div class="section-header">LIVE VOTING</div>
-                    <div id="poll-container">
-                        <div id="qr-area">
-                            <img id="qr-img" src="" alt="Scan to Vote">
-                            <p class="scan-text">SCAN TO VOTE</p>
-                        </div>
-                        <div id="results-area">
-                            <p class="loading-text">> Loading Poll Data...</p>
-                        </div>
+                    <div class="section-header">LIVE VOTING STATS</div>
+                    <div id="results-area">
+                        <p class="loading-text">> Fetching poll data...</p>
                     </div>
                 </section>
 
                 <section class="glass-panel sidebar-section section-bottom">
-                    <div class="news-content">
-                        <div class="section-header">COMMAND / NEWS</div>
-                        <div id="news-feed">
-                            <p>> Initializing Uplink...</p>
-                        </div>
+                    <div class="section-header">COMMAND / NEWS UPLINK</div>
+                    <div id="news-feed">
+                        <p>> Initializing Uplink...</p>
                     </div>
-
                     <div class="nav-controls">
-                        <button id="prevBtn" class="nav-btn">&lt;</button>
-                        <button id="nextBtn" class="nav-btn">&gt;</button>
+                        <button id="prevBtn" class="nav-btn">&lt; PREV</button>
+                        <button id="nextBtn" class="nav-btn">NEXT &gt;</button>
                     </div>
                 </section>
             </aside>
+        </div>
+
+        <div class="ticker-wrap">
+            <div class="ticker-label">BREAKING NEWS</div>
+            <div class="ticker">
+                <div class="ticker__item" id="newsTicker">LOADING SYSTEM UPDATES...</div>
+            </div>
         </div>
     </div>
 
