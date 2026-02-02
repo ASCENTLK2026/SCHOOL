@@ -20,7 +20,7 @@ body {
     background-color: #010201;
     color: var(--text-main);
     font-family: var(--font-ui);
-    overflow: hidden; /* No scrolling on dashboard screens */
+    overflow: auto; /* No scrolling on dashboard screens */
 }
 
 #smokeCanvas {
