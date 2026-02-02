@@ -4,18 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project TOXIC | ASCENT 2026</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <canvas id="smokeCanvas"></canvas>
-
     <div class="app-wrapper">
         <div class="container">
-
             <main class="glass-panel main-content">
                 <div class="decorative-corner top-left"></div>
                 <div class="decorative-corner top-right"></div>
@@ -31,15 +29,12 @@
                 <div class="hero-text">
                     <div class="status-indicator">
                         <div class="status-dot"></div>
-                        CONTAINMENT STABLE // PROTOCOL ACTIVE
+                        <span class="status-text">CONTAINMENT STABLE // PROTOCOL ACTIVE</span>
                     </div>
-
                     <h1 class="poison-title">PROJECT<br>TOXIC</h1>
-
                     <div id="countdown" class="large-countdown">
                         <div class="time-box">LOADING...</div>
                     </div>
-
                     <div class="system-diagnostics">
                         <div class="diag-item">
                             <span class="diag-label">SERVER LOAD</span>
@@ -55,25 +50,17 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="main-footer">
-                    TERMINAL V.2.0.4 | MADE BY AIVANCE | Ethan Peter
-                </div>
+                <div class="main-footer">TERMINAL V.2.0.4 | MADE BY AIVANCE | Ethan Peter</div>
             </main>
 
             <aside class="sidebar">
                 <section class="glass-panel sidebar-section section-top">
                     <div class="section-header" id="voting-title">LIVE VOTING STATS</div>
-                    <div id="results-area">
-                        <p class="loading-text">> Fetching poll data...</p>
-                    </div>
+                    <div id="results-area"><p class="loading-text">> Fetching poll data...</p></div>
                 </section>
-
                 <section class="glass-panel sidebar-section section-bottom">
                     <div class="section-header">COMMAND / NEWS UPLINK</div>
-                    <div id="news-feed">
-                        <p>> Initializing Uplink...</p>
-                    </div>
+                    <div id="news-feed"><p>> Initializing Uplink...</p></div>
                     <div class="nav-controls">
                         <button id="prevBtn" class="nav-btn">&lt; PREV</button>
                         <button id="nextBtn" class="nav-btn">NEXT &gt;</button>
@@ -81,7 +68,6 @@
                 </section>
             </aside>
         </div>
-
         <div class="ticker-wrap">
             <div class="ticker-label">BREAKING NEWS</div>
             <div class="ticker">
@@ -89,7 +75,6 @@
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

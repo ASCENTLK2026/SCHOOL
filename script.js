@@ -24,7 +24,7 @@ const updateCountdown = () => {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// --- TICKER DATA (Seamless Loop Logic) ---
+// --- TICKER DATA (Dynamic Speed + Seamless Loop) ---
 async function initTicker() {
     try {
         const response = await fetch('News.txt?v=' + Date.now());
@@ -37,57 +37,144 @@ async function initTicker() {
         const tickerEl = document.getElementById('newsTicker');
         tickerEl.innerHTML = finalString;
 
+        // --- DYNAMIC SPEED LOGIC ---
+        // Formula: Duration (s) = Width (px) / Speed (px/s)
+        const totalWidth = tickerEl.scrollWidth;
+        const speed = 100; // Pixels per second (Adjust for preference)
+        const duration = totalWidth / speed;
+        tickerEl.style.animationDuration = `${duration}s`;
+
     } catch (e) { console.error("Ticker failed", e); }
 }
 
-// --- NEWS SYSTEM (Ethos.txt) ---
+// --- UPDATED NEWS SYSTEM (Ethos.txt) ---
 const newsContainer = document.getElementById('news-feed');
-let newsData = [];
-let newsIndex = 0;
+const newsSection = document.querySelector('.section-bottom'); // For hover detection
+let newsItems = [];
+let currentNewsIndex = 0;
+let newsInterval;
 
+// 1. Typewriter Effect
+function typeWriter(element, text, speed = 20) {
+    element.innerHTML = ""; // Clear existing
+    element.classList.add('typing-cursor');
+
+    let i = 0;
+    function type() {
+        if (i < text.length) {
+            let char = text.charAt(i);
+            // Handle newlines as HTML breaks
+            if(char === '\n') {
+                element.innerHTML += '<br>';
+            } else {
+                element.innerHTML += char;
+            }
+            i++;
+            setTimeout(type, speed);
+        } else {
+            element.classList.remove('typing-cursor');
+        }
+    }
+    type();
+}
+
+// 2. Render Single News Item
+function updateNewsDisplay() {
+    if (newsItems.length === 0) return;
+
+    const item = newsItems[currentNewsIndex];
+
+    // Create structure with ID for typing target
+    let html = `<div class="news-entry" style="animation: fadeSlideIn 0.5s ease forwards">
+                    <h3>${item.title}</h3>
+                    <div id="type-target" style="line-height: 1.4; color: #ddd;"></div>
+                </div>`;
+
+    newsContainer.innerHTML = html;
+
+    // Trigger typing on body text
+    const target = document.getElementById('type-target');
+    typeWriter(target, item.body, 15); // Speed: 15ms per char
+
+    // Update index
+    currentNewsIndex = (currentNewsIndex + 1) % newsItems.length;
+}
+
+// 3. Fetch & Parse Data
 async function fetchNews() {
     try {
         const response = await fetch('Ethos.txt?v=' + Date.now());
         const text = await response.text();
         const rawPosts = text.split('/l').map(p => p.trim()).filter(p => p.length > 0);
 
-        newsData = rawPosts.map(post => {
-            let html = '<div class="news-entry">';
+        // Parse into Objects { title, body }
+        newsItems = rawPosts.map(post => {
+            let title = "SYSTEM UPDATE";
+            let bodyParts = [];
+
             post.split('\n').forEach(line => {
                 const cl = line.trim();
                 if (cl.startsWith('# ')) {
-                    html += `<h3>${cl.substring(2)}</h3>`;
-                }
-                else if (cl.startsWith('- ')) {
-                    html += `<p class="news-bullet">• ${cl.substring(2)}</p>`;
-                }
-                else if (cl.length > 0) {
-                    html += `<p>${cl}</p>`;
+                    title = cl.substring(2);
+                } else if (cl.startsWith('- ')) {
+                    bodyParts.push(`• ${cl.substring(2)}`);
+                } else if (cl.length > 0) {
+                    bodyParts.push(cl);
                 }
             });
-            html += '</div>';
-            return html;
+            // Join with newlines for the typeWriter to process
+            return { title: title, body: bodyParts.join('\n') };
         });
 
-        if (newsContainer.innerHTML.includes("Initializing")) {
-             renderNews();
+        if (newsItems.length > 0 && newsContainer.innerHTML.includes("Initializing")) {
+             updateNewsDisplay();
+             startNewsCycle();
         }
     } catch (e) { console.error(e); }
 }
 
-function renderNews() {
-    if (newsData.length === 0) return;
-    newsContainer.innerHTML = newsData[newsIndex];
+// 4. Cycle Controls (Pause on Hover)
+function startNewsCycle() {
+    if (newsInterval) clearInterval(newsInterval);
+    newsInterval = setInterval(updateNewsDisplay, 10000);
 }
 
+function stopNewsCycle() {
+    clearInterval(newsInterval);
+}
+
+// Manual Buttons
 document.getElementById('prevBtn').onclick = () => {
-    newsIndex = (newsIndex - 1 + newsData.length) % newsData.length;
-    renderNews();
+    stopNewsCycle();
+    // Logic to go back 2 steps because updateNewsDisplay increments immediately
+    currentNewsIndex = (currentNewsIndex - 2 + newsItems.length) % newsItems.length;
+    updateNewsDisplay();
+    // Don't restart cycle immediately so user can read
 };
 document.getElementById('nextBtn').onclick = () => {
-    newsIndex = (newsIndex + 1) % newsData.length;
-    renderNews();
+    stopNewsCycle();
+    updateNewsDisplay(); // Index is already set to next
 };
+
+// Hover Events
+if (newsSection) {
+    newsSection.addEventListener('mouseenter', stopNewsCycle);
+    newsSection.addEventListener('mouseleave', startNewsCycle);
+}
+
+// --- RANDOM GLITCH TRIGGER ---
+const triggerStatusGlitch = () => {
+    const statusText = document.querySelector('.status-text');
+    if (statusText) {
+        statusText.classList.add('glitch-active');
+        setTimeout(() => {
+            statusText.classList.remove('glitch-active');
+        }, 400);
+    }
+    const nextGlitch = Math.random() * (30000 - 15000) + 15000;
+    setTimeout(triggerStatusGlitch, nextGlitch);
+};
+triggerStatusGlitch();
 
 // --- POLL SYSTEM (Ethos_poll.txt) ---
 async function fetchPoll() {
@@ -98,7 +185,6 @@ async function fetchPoll() {
 
         let options = [];
         lines.forEach(line => {
-            // NEW: Check for title in text file
             if (line.startsWith('#')) {
                 const titleText = line.replace('#', '').trim();
                 const titleEl = document.getElementById('voting-title');
@@ -134,34 +220,74 @@ fetchPoll();
 // Refresh data every 30 seconds
 setInterval(() => { initTicker(); fetchNews(); fetchPoll(); }, 30000);
 
-// Fog/Smoke Effect
+// --- UPDATED FOG/SMOKE EFFECT ---
 const canvas = document.getElementById('smokeCanvas');
 const ctx = canvas.getContext('2d');
 let w, h, particles = [];
+
+const colors = [
+    "0, 255, 65",   // Classic Toxic Green
+    "0, 200, 150",  // Cyan/Teal
+    "50, 255, 100", // Bright Green
+    "200, 255, 200" // Faint White/Green mist
+];
+
 function resize() {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
 }
 window.onresize = resize;
+resize();
+
 class P {
     constructor() { this.reset(); }
+
     reset() {
-        this.x = Math.random() * w; this.y = Math.random() * h;
-        this.v = (Math.random() - 0.5) * 0.3; this.s = Math.random() * 300 + 150;
-        this.a = 0; this.l = 0; this.ml = Math.random() * 500 + 500;
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.s = Math.random() * 300 + 150;
+        this.a = 0;
+        this.l = 0;
+        this.ml = Math.random() * 500 + 500;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
     }
+
     update() {
-        this.x += this.v; this.l++;
-        this.a = Math.sin((this.l / this.ml) * Math.PI) * 0.12;
-        if (this.l > this.ml) this.reset();
+        this.x += this.vx;
+        this.y += this.vy;
+        this.l++;
+        this.a = Math.sin((this.l / this.ml) * Math.PI) * 0.15;
+        if (this.l > this.ml || this.x < -this.s || this.x > w + this.s || this.y < -this.s || this.y > h + this.s) {
+            this.reset();
+        }
     }
+
     draw() {
+        ctx.globalCompositeOperation = 'screen';
         const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.s);
-        g.addColorStop(0, `rgba(0, 255, 65, ${this.a})`);
-        g.addColorStop(1, 'transparent');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, 7); ctx.fill();
+        g.addColorStop(0, `rgba(${this.color}, ${this.a})`);
+        g.addColorStop(1, `rgba(${this.color}, 0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
     }
 }
-for(let i=0; i<30; i++) particles.push(new P());
-function loop() { ctx.clearRect(0,0,w,h); particles.forEach(p => {p.update(); p.draw();}); requestAnimationFrame(loop); }
-loop();
+
+particles = [];
+for(let i=0; i<12; i++) {
+    particles.push(new P());
+}
+
+function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+    requestAnimationFrame(animate);
+}
+animate();

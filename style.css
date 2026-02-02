@@ -7,21 +7,21 @@
     --font-display: 'Bebas Neue', 'Impact', sans-serif;
     --font-ui: 'Rajdhani', sans-serif;
 
-    /* Global Scale Factor for Smart Boards */
-    --h-unit: 1vh;
-    --w-unit: 1vw;
+    /* Fixed Ticker Height Variable */
+    --ticker-height: 6vh;
 }
 
 * { box-sizing: border-box; cursor: default; user-select: none; }
 
-body {
+/* 1. LOCK THE SCREEN SIZE */
+html, body {
     margin: 0; padding: 0;
-    min-height: 100vh; width: 100vw;
+    height: 100vh; /* Force exact screen height */
+    width: 100vw;
     background-color: #010201;
     color: var(--text-main);
     font-family: var(--font-ui);
-    overflow: auto; /* No scrolling on dashboard screens */
-    overflow-x: hidden;
+    overflow: hidden; /* Disable page-level scrolling */
 }
 
 #smokeCanvas {
@@ -30,24 +30,28 @@ body {
     z-index: 0; pointer-events: none;
 }
 
-/* MAIN LAYOUT WRAPPER */
+/* 2. MAKE WRAPPER FILL EXACTLY THE SPACE ABOVE TICKER */
 .app-wrapper {
     position: relative; z-index: 10;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100vh; /* Fill screen */
     display: flex; flex-direction: column;
-    /* UPDATE: Increased bottom padding to 9vh to clear the ticker on smart boards */
-    padding: 2vh 2vw 9vh 2vw;
+
+    /* Padding: Top | Right | Bottom (Space for Ticker) | Left */
+    padding: 2vh 2vw calc(var(--ticker-height) + 2vh) 2vw;
 }
 
+/* 3. CONTAINER TAKES ALL REMAINING SPACE */
 .container {
-    flex: 1;
+    flex: 1; /* Grow to fill whatever is left */
     display: grid;
-    /* Dynamic Grid: Main Content takes 72%, Sidebar takes 28% */
     grid-template-columns: 1fr 0.35fr;
     gap: 2vw;
     width: 100%;
+
+    /* CRITICAL: These two lines stop the grid from growing with content */
     height: 100%;
-    min-height: 0; /* Prevents grid blowout */
+    min-height: 0;
 }
 
 /* GLASS PANELS */
@@ -55,7 +59,7 @@ body {
     background: var(--glass-bg);
     backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
-    border-radius: 6px;
+    border-radius: 0px;
     padding: 3vh 2vw;
     display: flex; flex-direction: column;
     position: relative;
@@ -185,13 +189,33 @@ h1.poison-title {
 .poll-fill { height: 100%; background: var(--toxic); transition: width 1s; }
 
 /* NEWS FEED UPDATES */
-#news-feed {
-    /* UPDATE: Flex 1 expands this div to fill available height */
+/* === RIGHT SIDEBAR === */
+.sidebar {
+    display: flex; flex-direction: column; gap: 2vh;
+    height: 100%;
+    overflow: hidden; /* Stop sidebar from pushing page out */
+}
+
+.sidebar-section {
     flex: 1;
-    overflow-y: auto; /* Allows scrolling inside the news area if needed */
+    min-height: 0; /* CRITICAL: Allows flex child to shrink/scroll */
+    display: flex; flex-direction: column;
+    padding: 2vh 2vw;
+}
+
+/* NEWS FEED UPDATES */
+#news-feed {
+    flex: 1; /* Fill available vertical space */
+    overflow-y: auto; /* Scroll ONLY this area if text is long */
     display: flex;
     flex-direction: column;
+    padding-right: 5px; /* Space for scrollbar */
 }
+
+/* Custom Scrollbar Styling to match theme */
+#news-feed::-webkit-scrollbar { width: 5px; }
+#news-feed::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+#news-feed::-webkit-scrollbar-thumb { background: var(--toxic); border-radius: 2px; }
 
 #news-feed h3 {
     color: var(--toxic); margin: 0 0 1vh 0;
@@ -253,6 +277,7 @@ h1.poison-title {
     color: white; font-weight: 600; letter-spacing: 2px;
     font-size: clamp(1rem, 2vh, 2rem);
     will-change: transform;
+    /* Animation duration will be overridden by JS */
     animation: tickerLoop 60s linear infinite;
 }
 .ticker__item span { color: var(--toxic); margin: 0 2vw; }
@@ -265,9 +290,56 @@ h1.poison-title {
 @keyframes scan { 0% { opacity:0; } 50% { opacity:1; } 100% { opacity:0; } }
 @keyframes fadeSlideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
+/* Glitch Keyframes */
+@keyframes statusGlitch {
+    0% { transform: none; opacity: 1; }
+    7% { transform: skew(-0.5deg, -0.9deg); opacity: 0.75; color: #ff003c; }
+    10% { transform: none; opacity: 1; color: var(--toxic); }
+    27% { transform: none; }
+    30% { transform: translateX(-2px); text-shadow: 2px 0 red, -2px 0 cyan; }
+    35% { transform: none; text-shadow: none; }
+    100% { transform: none; }
+}
+
+.glitch-active {
+    animation: statusGlitch 0.4s ease-in-out;
+}
+
 @media (max-aspect-ratio: 1/1) {
     .container { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
     h1.poison-title { font-size: 15vw; margin: 1vh 0; }
     .header-logos { display: none; }
     .app-wrapper { overflow-y: auto; padding-bottom: 8vh; }
+}
+
+/* --- CREATIVE JUICE: CRT SCANLINE OVERLAY --- */
+body::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background:
+        /* Faint scanlines */
+        linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+        ),
+        /* RGB Sub-pixel separation effect */
+        linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.06),
+            rgba(0, 255, 0, 0.02),
+            rgba(0, 0, 255, 0.06)
+        );
+    z-index: 999; /* Sit on top of everything */
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none; /* Let clicks pass through */
+}
+
+/* Typing Cursor Effect */
+.typing-cursor::after {
+    content: '█';
+    animation: blink 1s step-end infinite;
+    color: var(--toxic);
+    margin-left: 5px;
 }
