@@ -16,12 +16,13 @@
 /* 1. LOCK THE SCREEN SIZE */
 html, body {
     margin: 0; padding: 0;
-    height: 100vh; /* Force exact screen height */
+    min-height: 100vh; /* Force exact screen height */
     width: 100vw;
     background-color: #010201;
     color: var(--text-main);
     font-family: var(--font-ui);
-    overflow: hidden; /* Disable page-level scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #smokeCanvas {
@@ -34,7 +35,7 @@ html, body {
 .app-wrapper {
     position: relative; z-index: 10;
     width: 100%;
-    height: 100vh; /* Fill screen */
+    min-height: 100vh; /* Fill screen */
     display: flex; flex-direction: column;
 
     /* Padding: Top | Right | Bottom (Space for Ticker) | Left */
