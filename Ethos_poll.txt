@@ -1,7 +1,6 @@
-# BATTLE OF THE AGENTS
-- VIPER = 3
-- REYNA = 1
-- JETT = 2
-- BRIMSTONE = 5
+# Table Tennis?
+- Yes = 0
+- No = 0
+- I Don't Care = 0
 
 6 . 2 . 2026 - 13:15

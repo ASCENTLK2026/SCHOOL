@@ -6,17 +6,14 @@
     --text-main: #ffffff;
     --font-display: 'Bebas Neue', 'Impact', sans-serif;
     --font-ui: 'Rajdhani', sans-serif;
-
-    /* Fixed Ticker Height Variable */
     --ticker-height: 6vh;
 }
 
 * { box-sizing: border-box; cursor: default; user-select: none; }
 
-/* 1. LOCK THE SCREEN SIZE */
 html, body {
     margin: 0; padding: 0;
-    min-height: 100vh; /* Force exact screen height */
+    min-height: 100vh;
     width: 100vw;
     background-color: #010201;
     color: var(--text-main);
@@ -31,31 +28,24 @@ html, body {
     z-index: 0; pointer-events: none;
 }
 
-/* 2. MAKE WRAPPER FILL EXACTLY THE SPACE ABOVE TICKER */
 .app-wrapper {
     position: relative; z-index: 10;
     width: 100%;
-    min-height: 100vh; /* Fill screen */
+    min-height: 100vh;
     display: flex; flex-direction: column;
-
-    /* Padding: Top | Right | Bottom (Space for Ticker) | Left */
     padding: 2vh 2vw calc(var(--ticker-height) + 2vh) 2vw;
 }
 
-/* 3. CONTAINER TAKES ALL REMAINING SPACE */
 .container {
-    flex: 1; /* Grow to fill whatever is left */
+    flex: 1;
     display: grid;
     grid-template-columns: 1fr 0.35fr;
     gap: 2vw;
     width: 100%;
-
-    /* CRITICAL: These two lines stop the grid from growing with content */
     height: 100%;
     min-height: 0;
 }
 
-/* GLASS PANELS */
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -67,7 +57,6 @@ html, body {
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
 }
 
-/* Decorative Corners */
 .decorative-corner {
     position: absolute; width: 3vmin; height: 3vmin;
     border: 3px solid var(--toxic); opacity: 0.5; pointer-events: none;
@@ -77,12 +66,7 @@ html, body {
 .bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
 .bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
-/* === LEFT SIDE (HERO) === */
-.main-content {
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
+.main-content { justify-content: center; align-items: center; text-align: center; }
 
 .header-logos {
     position: absolute; top: 2vh; left: 2vw; right: 2vw;
@@ -104,7 +88,6 @@ html, body {
     flex: 1;
 }
 
-/* Status Text */
 .status-indicator {
     color: var(--toxic); letter-spacing: 0.3vw; font-weight: 700;
     margin-bottom: 0;
@@ -119,7 +102,6 @@ html, body {
     animation: blink 2s infinite;
 }
 
-/* THE MASSIVE TITLE */
 h1.poison-title {
     font-family: var(--font-display);
     font-size: min(18vw, 22vh);
@@ -134,7 +116,6 @@ h1.poison-title {
     z-index: 2;
 }
 
-/* COUNTDOWN */
 .large-countdown {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5vw;
     width: 100%; max-width: 90%;
@@ -151,7 +132,6 @@ h1.poison-title {
 .time-val { font-size: clamp(1.5rem, 5vw, 6rem); font-weight: 700; color: white; line-height: 1; font-family: var(--font-display); letter-spacing: 2px; }
 .time-label { font-size: clamp(0.7rem, 1vh, 1.5rem); color: var(--toxic); letter-spacing: 2px; margin-top: 5px; font-weight: 700; }
 
-/* DIAGNOSTICS (Bottom Filler) */
 .system-diagnostics {
     display: flex; gap: 2vw; width: 100%; max-width: 90%;
     padding: 2vh 1vw; border-top: 1px solid rgba(255,255,255,0.1);
@@ -170,50 +150,107 @@ h1.poison-title {
     color: #444; font-size: clamp(10px, 1vh, 16px); letter-spacing: 3px;
 }
 
-/* === RIGHT SIDEBAR === */
 .sidebar { display: flex; flex-direction: column; gap: 2vh; height: 100%; overflow: hidden; }
 .sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 2vh 2vw; }
 
+.section-header-wrapper {
+    display: flex; flex-direction: column;
+    margin-bottom: 2vh;
+}
+
 .section-header {
-    font-size: clamp(1.2rem, 2.5vh, 2.5rem);
-    color: white; margin-bottom: 2vh;
-    display: flex; align-items: center; gap: 15px; opacity: 1; font-weight: 700;
-    border-bottom: 1px solid var(--toxic); padding-bottom: 1vh;
+    font-size: clamp(1.1rem, 2.2vh, 2.2rem);
+    color: white;
+    display: flex; align-items: center; justify-content: space-between; font-weight: 700;
     text-shadow: 0 0 10px var(--toxic-glow);
 }
 
-/* POLL BARS */
+/* --- NEW FEATURES STYLES --- */
+
+/* Uplink Separator */
+.uplink-separator {
+    width: 100%;
+    height: 1px;
+    background: var(--toxic);
+    box-shadow: 0 0 5px var(--toxic-glow);
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+    opacity: 0.5;
+}
+
+/* Voting Footer (Progress Bar) */
+.voting-footer {
+    margin-top: auto;
+    padding-top: 2vh;
+}
+
+.vote-label-row {
+    display: flex; justify-content: space-between;
+    margin-bottom: 0.5vh;
+    font-size: clamp(0.7rem, 1.2vh, 1rem);
+    color: #888;
+    letter-spacing: 1px;
+}
+.v-time { color: var(--toxic); font-weight: 700; }
+
+.vote-progress-track {
+    width: 100%;
+    height: 1.5vh;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #333;
+    padding: 2px;
+}
+
+.vote-progress-fill {
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--toxic),
+        var(--toxic) 10px,
+        #00cc33 10px,
+        #00cc33 20px
+    );
+    width: 0%;
+    box-shadow: 0 0 10px var(--toxic-glow);
+    transition: width 1s linear;
+}
+
+/* News Indicators */
+.news-indicators {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.news-indicator-box {
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--toxic);
+    background: rgba(0, 255, 65, 0.1);
+    transition: all 0.3s ease;
+}
+
+.news-indicator-box.active {
+    background: var(--toxic);
+    box-shadow: 0 0 8px var(--toxic-glow);
+}
+
+/* -------------------------- */
+
 #results-area { overflow-y: auto; padding-right: 5px; flex: 1; }
 .poll-bar-item { margin-bottom: 2vh; }
 .poll-label { display: flex; justify-content: space-between; margin-bottom: 0.5vh; font-size: clamp(1rem, 1.8vh, 2rem); letter-spacing: 1px; }
 .poll-track { height: 1.5vh; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
 .poll-fill { height: 100%; background: var(--toxic); transition: width 1s; }
 
-/* NEWS FEED UPDATES */
-/* === RIGHT SIDEBAR === */
-.sidebar {
-    display: flex; flex-direction: column; gap: 2vh;
-    height: 100%;
-    overflow: hidden; /* Stop sidebar from pushing page out */
-}
-
-.sidebar-section {
-    flex: 1;
-    min-height: 0; /* CRITICAL: Allows flex child to shrink/scroll */
-    display: flex; flex-direction: column;
-    padding: 2vh 2vw;
-}
-
-/* NEWS FEED UPDATES */
 #news-feed {
-    flex: 1; /* Fill available vertical space */
-    overflow-y: auto; /* Scroll ONLY this area if text is long */
+    flex: 1;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding-right: 5px; /* Space for scrollbar */
+    padding-right: 5px;
 }
 
-/* Custom Scrollbar Styling to match theme */
 #news-feed::-webkit-scrollbar { width: 5px; }
 #news-feed::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
 #news-feed::-webkit-scrollbar-thumb { background: var(--toxic); border-radius: 2px; }
@@ -230,37 +267,10 @@ h1.poison-title {
     font-size: clamp(0.9rem, 2vh, 1.8rem);
 }
 
-#news-feed .news-bullet {
-    margin-top: -1vh;
-    margin-bottom: 0.5vh;
-    padding-left: 0.5vw;
-    color: #fff;
-}
-
-/* NAV CONTROLS UPDATES */
-.nav-controls {
-    display: flex; gap: 1vw;
-    margin-top: 1vh;
-    height: 5vh;
-    /* UPDATE: Ensures buttons stick to bottom even if flex acts up */
-    flex-shrink: 0;
-}
-
-.nav-btn {
-    flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--toxic);
-    color: var(--toxic); font-weight: 700; cursor: pointer; letter-spacing: 2px;
-    transition: 0.2s; font-family: var(--font-ui);
-    font-size: clamp(0.8rem, 1.5vh, 1.5rem);
-    display: flex; align-items: center; justify-content: center;
-}
-.nav-btn:hover { background: var(--toxic); color: black; box-shadow: 0 0 15px var(--toxic-glow); }
-
-/* === TICKER (Bottom) === */
 .ticker-wrap {
     position: fixed; bottom: 0; left: 0; width: 100%;
     background: black; border-top: 2px solid var(--toxic);
-    display: flex;
-    height: 6vh;
+    display: flex; height: 6vh;
     align-items: center; z-index: 100;
 }
 .ticker-label {
@@ -270,41 +280,31 @@ h1.poison-title {
     letter-spacing: 2px; white-space: nowrap;
     z-index: 101; box-shadow: 5px 0 15px rgba(0,0,0,0.5);
 }
-.ticker {
-    flex: 1; overflow: hidden; height: 100%; position: relative; display: flex; align-items: center;
-}
+.ticker { flex: 1; overflow: hidden; height: 100%; position: relative; display: flex; align-items: center; }
 .ticker__item {
     display: inline-block; white-space: nowrap;
     color: white; font-weight: 600; letter-spacing: 2px;
     font-size: clamp(1rem, 2vh, 2rem);
     will-change: transform;
-    /* Animation duration will be overridden by JS */
     animation: tickerLoop 60s linear infinite;
 }
 .ticker__item span { color: var(--toxic); margin: 0 2vw; }
 
-@keyframes tickerLoop {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
+@keyframes tickerLoop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 @keyframes scan { 0% { opacity:0; } 50% { opacity:1; } 100% { opacity:0; } }
 @keyframes fadeSlideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-/* Glitch Keyframes */
 @keyframes statusGlitch {
     0% { transform: none; opacity: 1; }
     7% { transform: skew(-0.5deg, -0.9deg); opacity: 0.75; color: #ff003c; }
     10% { transform: none; opacity: 1; color: var(--toxic); }
-    27% { transform: none; }
     30% { transform: translateX(-2px); text-shadow: 2px 0 red, -2px 0 cyan; }
     35% { transform: none; text-shadow: none; }
     100% { transform: none; }
 }
 
-.glitch-active {
-    animation: statusGlitch 0.4s ease-in-out;
-}
+.glitch-active { animation: statusGlitch 0.4s ease-in-out; }
 
 @media (max-aspect-ratio: 1/1) {
     .container { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
@@ -313,34 +313,16 @@ h1.poison-title {
     .app-wrapper { overflow-y: auto; padding-bottom: 8vh; }
 }
 
-/* --- CREATIVE JUICE: CRT SCANLINE OVERLAY --- */
 body::after {
     content: " ";
-    display: block;
-    position: absolute;
+    display: block; position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
-    background:
-        /* Faint scanlines */
-        linear-gradient(
-            rgba(18, 16, 16, 0) 50%,
-            rgba(0, 0, 0, 0.25) 50%
-        ),
-        /* RGB Sub-pixel separation effect */
-        linear-gradient(
-            90deg,
-            rgba(255, 0, 0, 0.06),
-            rgba(0, 255, 0, 0.02),
-            rgba(0, 0, 255, 0.06)
-        );
-    z-index: 999; /* Sit on top of everything */
-    background-size: 100% 2px, 3px 100%;
-    pointer-events: none; /* Let clicks pass through */
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
 }
 
-/* Typing Cursor Effect */
 .typing-cursor::after {
-    content: '█';
-    animation: blink 1s step-end infinite;
-    color: var(--toxic);
-    margin-left: 5px;
+    content: '█'; animation: blink 1s step-end infinite;
+    color: var(--toxic); margin-left: 5px;
 }

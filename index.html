@@ -55,16 +55,30 @@
 
             <aside class="sidebar">
                 <section class="glass-panel sidebar-section section-top">
-                    <div class="section-header" id="voting-title">LIVE VOTING STATS</div>
-                    <div id="results-area"><p class="loading-text">> Fetching poll data...</p></div>
-                </section>
-                <section class="glass-panel sidebar-section section-bottom">
-                    <div class="section-header">COMMAND / NEWS UPLINK</div>
-                    <div id="news-feed"><p>> Initializing Uplink...</p></div>
-                    <div class="nav-controls">
-                        <button id="prevBtn" class="nav-btn">&lt; PREV</button>
-                        <button id="nextBtn" class="nav-btn">NEXT &gt;</button>
+                    <div class="section-header-wrapper">
+                        <div class="section-header" id="voting-title">LIVE VOTING STATS</div>
                     </div>
+
+                    <div id="results-area"><p class="loading-text">> Fetching poll data...</p></div>
+
+                    <div class="voting-footer">
+                        <div class="vote-label-row">
+                            <span class="v-label">POLL CLOSING STATUS</span>
+                            <span class="v-time" id="vote-time-text">--:--</span>
+                        </div>
+                        <div class="vote-progress-track">
+                            <div id="vote-progress-bar" class="vote-progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="glass-panel sidebar-section section-bottom">
+                    <div class="section-header">
+                        <span>UPLINK</span>
+                        <div id="news-indicators" class="news-indicators"></div>
+                    </div>
+                    <div class="uplink-separator"></div>
+                    <div id="news-feed"><p>> Initializing Uplink...</p></div>
                 </section>
             </aside>
         </div>
