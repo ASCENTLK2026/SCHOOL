@@ -4,5 +4,6 @@
 /l
 
 # INFO
-  Do you have a Story? Do you think it deserves to be known?
+  Do you have a Story?
+  Do you think it deserves to be known?
   In that case contact Ethan, to tell it Ethos.
