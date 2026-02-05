@@ -1,7 +1,7 @@
 // --- COUNTDOWN CONFIG ---
 const countdownDate = new Date("Feb 6, 2026 10:30:00").getTime();
 // Start date for the progress bar scaling (arbitrary 'start' of the campaign)
-const voteStartDate = new Date("Jan 29, 2026 00:00:00").getTime();
+const voteStartDate = new Date("Feb 4, 2026 00:00:00").getTime();
 // Default vote end date (will be overwritten by file data)
 let voteEndDate = new Date("Feb 6, 2026 10:30:00").getTime();
 
@@ -24,7 +24,7 @@ const updateCountdown = () => {
 
         countdownEl.innerHTML = `
             <div class="time-box"><span class="time-val">${d}</span><span class="time-label">DAYS</span></div>
-            <div class="time-box"><span class="time-val">${h}</span><span class="time-label">HOURS</span></div>topics
+            <div class="time-box"><span class="time-val">${h}</span><span class="time-label">HOURS</span></div>
             <div class="time-box"><span class="time-val">${m}</span><span class="time-label">MINUTES</span></div>
             <div class="time-box"><span class="time-val">${s}</span><span class="time-label">SECONDS</span></div>
         `;
