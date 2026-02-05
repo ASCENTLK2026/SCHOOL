@@ -174,7 +174,7 @@ async function fetchNews() {
 
 function startNewsCycle() {
     if (newsInterval) clearInterval(newsInterval);
-    newsInterval = setInterval(updateNewsDisplay, 8000);
+    newsInterval = setInterval(updateNewsDisplay, 10000);
 }
 
 function stopNewsCycle() { clearInterval(newsInterval); }
