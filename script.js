@@ -1,33 +1,37 @@
-// --- COUNTDOWN CONFIG ---
-const countdownDate = new Date("Feb 6, 2026 10:30:00").getTime();
-// Start date for the progress bar scaling (arbitrary 'start' of the campaign)
+// --- EXISTING CONFIG ---
+const countdownDate = new Date("Feb 6, 2026 10:45:00").getTime();
 const voteStartDate = new Date("Feb 4, 2026 00:00:00").getTime();
-// Default vote end date (will be overwritten by file data)
-let voteEndDate = new Date("Feb 6, 2026 10:30:00").getTime();
+let voteEndDate = new Date("Feb 6, 2026 10:45:00").getTime();
 
-const countdownEl = document.getElementById("countdown");
+// --- SELECT ELEMENTS ---
+const countdownEl = document.getElementById("countdown"); // Will be null on the new page
 const voteProgressEl = document.getElementById("vote-progress-bar");
 const voteTimeTextEl = document.getElementById("vote-time-text");
 
 const updateCountdown = () => {
     const now = new Date().getTime();
-
-    // Main Event Countdown
     const distance = countdownDate - now;
-    if (distance < 0) {
-        countdownEl.innerHTML = "<div class='time-box' style='grid-column: span 4; background: rgba(0,255,65,0.2)'><span class='time-val' style='color: white'>CONTAINMENT BROKEN</span></div>";
-    } else {
-        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((distance % (1000 * 60)) / 1000);
 
-        countdownEl.innerHTML = `
-            <div class="time-box"><span class="time-val">${d}</span><span class="time-label">DAYS</span></div>
-            <div class="time-box"><span class="time-val">${h}</span><span class="time-label">HOURS</span></div>
-            <div class="time-box"><span class="time-val">${m}</span><span class="time-label">MINUTES</span></div>
-            <div class="time-box"><span class="time-val">${s}</span><span class="time-label">SECONDS</span></div>
-        `;
+    // 1. LOGIC FOR THE OLD PAGE (If countdown exists)
+    if (countdownEl) {
+        if (distance < 0) {
+            // Time is up! Redirect to the new page
+            clearInterval(updateCountdown);
+            window.location.href = "access.html";
+        } else {
+            // Update the numbers
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownEl.innerHTML = `
+                <div class="time-box"><span class="time-val">${d}</span><span class="time-label">DAYS</span></div>
+                <div class="time-box"><span class="time-val">${h}</span><span class="time-label">HOURS</span></div>
+                <div class="time-box"><span class="time-val">${m}</span><span class="time-label">MINS</span></div>
+                <div class="time-box"><span class="time-val">${s}</span><span class="time-label">SECS</span></div>
+            `;
+        }
     }
 
     // Voting Progress Bar Logic

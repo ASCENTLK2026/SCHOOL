@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM ACCESS</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="transition-mode">
+
+    <div class="terminal-container">
+        <div class="terminal-loader">
+            <div class="terminal-bar"></div>
+        </div>
+        <div id="terminal-text" class="terminal-text">ESTABLISHING CONNECTION...</div>
+    </div>
+
+    <script>
+        // Simple script to handle the text sequence and redirect
+        const textElement = document.getElementById('terminal-text');
+        const steps = [
+            { text: "ESTABLISHING CONNECTION...", delay: 0 },
+            { text: "BYPASSING FIREWALLS...", delay: 1000 },
+            { text: "DECRYPTING ARCHIVES...", delay: 2000 },
+            { text: "ACCESS GRANTED", delay: 3000 }
+        ];
+
+        // Play the sequence
+        steps.forEach(step => {
+            setTimeout(() => {
+                textElement.innerText = step.text;
+                textElement.classList.remove('glitch-effect'); // Reset animation
+                void textElement.offsetWidth; // Trigger reflow
+                textElement.classList.add('glitch-effect'); // Re-trigger animation
+
+                // If it's the last step ("ACCESS GRANTED"), turn green
+                if(step.text === "ACCESS GRANTED") {
+                    textElement.style.color = "#00ff41";
+                    textElement.style.textShadow = "0 0 20px #00ff41";
+                }
+            }, step.delay);
+        });
+
+        // Redirect after 4.5 seconds
+        setTimeout(() => {
+            window.location.href = "revealed.html";
+        }, 4500);
+    </script>
+</body>
+</html>
