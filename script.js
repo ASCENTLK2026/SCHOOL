@@ -1,6 +1,6 @@
 // --- EXISTING CONFIG ---
-//const countdownDate = new Date("Feb 6, 2026 10:45:00").getTime();
-const countdownDate = new Date().getTime() + 10000;
+const countdownDate = new Date("Feb 6, 2026 10:45:00").getTime();
+//const countdownDate = new Date().getTime() + 10000;
 const voteStartDate = new Date("Feb 4, 2026 00:00:00").getTime();
 let voteEndDate = new Date("Feb 6, 2026 10:45:00").getTime();
 
