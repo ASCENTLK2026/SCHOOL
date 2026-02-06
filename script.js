@@ -1,8 +1,8 @@
 // --- EXISTING CONFIG ---
-const countdownDate = new Date("Feb 6, 2026 13:15:00").getTime();
+const countdownDate = new Date("Feb 6, 2026 13:45:00").getTime();
 //const countdownDate = new Date().getTime() + 10000;
 const voteStartDate = new Date("Feb 4, 2026 00:00:00").getTime();
-let voteEndDate = new Date("Feb 6, 2026 13:15:00").getTime();
+let voteEndDate = new Date("Feb 6, 2026 13:45:00").getTime();
 
 // --- SELECT ELEMENTS ---
 const countdownEl = document.getElementById("countdown"); // Will be null on the new page
