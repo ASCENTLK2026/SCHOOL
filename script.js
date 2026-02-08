@@ -1,51 +1,23 @@
-// --- EXISTING CONFIG ---
-const countdownDate = new Date("Feb 6, 2026 13:45:00").getTime();
-//const countdownDate = new Date().getTime() + 10000;
-const voteStartDate = new Date("Feb 4, 2026 00:00:00").getTime();
-let voteEndDate = new Date("Feb 6, 2026 13:45:00").getTime();
+// --- CONFIG ---
+const voteStartDate = new Date("Feb 8, 2026 00:00:00").getTime();
+let voteEndDate = new Date("Feb 13, 2026 10:30:00").getTime();
 
-// --- SELECT ELEMENTS ---
-const countdownEl = document.getElementById("countdown"); // Will be null on the new page
+// --- ELEMENTS ---
 const voteProgressEl = document.getElementById("vote-progress-bar");
 const voteTimeTextEl = document.getElementById("vote-time-text");
+const resultsArea = document.getElementById('results-area');
 
-const updateCountdown = () => {
+// --- MAIN LOOP (Timers) ---
+const updateSystem = () => {
     const now = new Date().getTime();
-    const distance = countdownDate - now;
 
-    // --- IMPORTANT: Run this block ONLY on the Index/Countdown page ---
-    if (countdownEl) {
-        if (distance < 0) {
-            clearInterval(updateCountdown);
-            // Redirect to your transition page
-            window.location.href = "access.html";
-            return;
-        }
-
-        // Update the HTML
-        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-        countdownEl.innerHTML = `
-            <div class="time-box"><span class="time-val">${d}</span><span class="time-label">DAYS</span></div>
-            <div class="time-box"><span class="time-val">${h}</span><span class="time-label">HOURS</span></div>
-            <div class="time-box"><span class="time-val">${m}</span><span class="time-label">MINS</span></div>
-            <div class="time-box"><span class="time-val">${s}</span><span class="time-label">SECS</span></div>
-        `;
-    }
-
-    // Voting Progress Bar Logic (Runs on ALL pages)
+    // VOTING TIMER LOGIC
     if(voteProgressEl && voteTimeTextEl) {
         const totalDuration = voteEndDate - voteStartDate;
         const timeElapsed = now - voteStartDate;
         const timeLeft = voteEndDate - now;
 
-        // Calculate percentage (0 to 100)
         let percent = (timeElapsed / totalDuration) * 100;
-
-        // Clamp values
         if (percent < 0) percent = 0;
         if (percent > 100) percent = 100;
 
@@ -53,57 +25,90 @@ const updateCountdown = () => {
 
         if (timeLeft < 0) {
             voteTimeTextEl.innerText = "CLOSED";
-            voteTimeTextEl.style.color = "#ff003c";
-            voteProgressEl.style.background = "#ff003c";
         } else {
-            const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hoursLeft = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
-            if(daysLeft > 0) {
-                voteTimeTextEl.innerText = `${daysLeft}d ${hoursLeft}h REMAINING`;
-            } else {
-                const minsLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                voteTimeTextEl.innerText = `${hoursLeft}h ${minsLeft}m REMAINING`;
-            }
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            voteTimeTextEl.innerText = days > 0 ? `${days}d ${hours}h LEFT` : `${hours}h LEFT`;
         }
     }
 };
-setInterval(updateCountdown, 1000);
-updateCountdown();
+setInterval(updateSystem, 1000);
+updateSystem();
 
-// --- TICKER DATA ---
-async function initTicker() {
+// --- POLL DATA SYSTEM (The missing part) ---
+async function fetchPollData() {
     try {
-        const response = await fetch('News.txt?v=' + Date.now());
+        // Fetch the file with a timestamp to prevent caching
+        const response = await fetch('Ethos_poll.txt?v=' + Date.now());
         const text = await response.text();
-        const items = text.split('\n').map(i => i.trim()).filter(i => i.length > 0);
-        const separator = "   <span>///</span>   ";
-        const coreString = items.join(separator);
-        const finalString = coreString + separator + coreString;
 
-        const tickerEl = document.getElementById('newsTicker');
-        if (tickerEl) {
-            tickerEl.innerHTML = finalString;
-            const totalWidth = tickerEl.scrollWidth;
-            const speed = 100;
-            const duration = totalWidth / speed;
-            tickerEl.style.animationDuration = `${duration}s`;
-        }
-    } catch (e) { console.error("Ticker failed", e); }
+        // PARSE THE TEXT FILE
+        const lines = text.split('\n');
+        let question = "Current Poll";
+        let options = [];
+        let totalVotes = 0;
+
+        lines.forEach(line => {
+            const cleanLine = line.trim();
+            if (cleanLine.startsWith('#')) {
+                // This is the question
+                question = cleanLine.substring(1).trim();
+            } else if (cleanLine.startsWith('-')) {
+                // This is an option: "- Yes = 10"
+                const parts = cleanLine.substring(1).split('=');
+                if (parts.length === 2) {
+                    const label = parts[0].trim();
+                    const val = parseInt(parts[1].trim()) || 0;
+                    options.push({ label, val });
+                    totalVotes += val;
+                }
+            }
+        });
+
+        // GENERATE HTML
+        let html = `<div class="poll-question">${question}</div>`;
+
+        options.forEach(opt => {
+            let percentage = totalVotes === 0 ? 0 : Math.round((opt.val / totalVotes) * 100);
+            html += `
+                <div class="poll-option">
+                    <div class="poll-header">
+                        <span class="p-label">${opt.label}</span>
+                        <span class="p-val">${percentage}%</span>
+                    </div>
+                    <div class="p-bar-track">
+                        <div class="p-bar-fill" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Update the Title in the header if you want
+        const titleEl = document.getElementById('voting-title');
+        if(titleEl) titleEl.innerText = "LIVE POLL";
+
+        if(resultsArea) resultsArea.innerHTML = html;
+
+    } catch (e) {
+        console.error("Poll Error:", e);
+        if(resultsArea) resultsArea.innerHTML = `<p class="error-text">POLL DATA OFFLINE</p>`;
+    }
 }
 
-// --- NEWS SYSTEM WITH INDICATORS ---
+// Refresh poll data every 5 seconds
+fetchPollData();
+setInterval(fetchPollData, 5000);
+
+
+// --- NEWS SYSTEM ---
 const newsContainer = document.getElementById('news-feed');
-const newsSection = document.querySelector('.section-bottom');
 const indicatorsContainer = document.getElementById('news-indicators');
 let newsItems = [];
 let currentNewsIndex = 0;
-let newsInterval;
 
-function typeWriter(element, text, speed = 20) {
+function typeWriter(element, text, speed = 10) {
     if (!element) return;
     element.innerHTML = "";
-    element.classList.add('typing-cursor');
     let i = 0;
     function type() {
         if (i < text.length) {
@@ -111,8 +116,6 @@ function typeWriter(element, text, speed = 20) {
             element.innerHTML += (char === '\n') ? '<br>' : char;
             i++;
             setTimeout(type, speed);
-        } else {
-            element.classList.remove('typing-cursor');
         }
     }
     type();
@@ -129,21 +132,19 @@ function updateIndicators() {
 
 function updateNewsDisplay() {
     if (newsItems.length === 0 || !newsContainer) return;
-
     const item = newsItems[currentNewsIndex];
-    let html = `<div class="news-entry" style="animation: fadeSlideIn 0.5s ease forwards">
+
+    let html = `<div class="news-entry">
                     <h3>${item.title}</h3>
-                    <div id="type-target" style="line-height: 1.4; color: #ddd;"></div>
+                    <div id="type-target"></div>
                 </div>`;
     newsContainer.innerHTML = html;
 
     const target = document.getElementById('type-target');
-    typeWriter(target, item.body, 15);
-
+    typeWriter(target, item.body, 10);
     updateIndicators();
 
-    const totalStories = newsItems.length;
-    currentNewsIndex = (currentNewsIndex + 1) % totalStories;
+    currentNewsIndex = (currentNewsIndex + 1) % newsItems.length;
 }
 
 async function fetchNews() {
@@ -153,7 +154,7 @@ async function fetchNews() {
         const rawPosts = text.split('/l').map(p => p.trim()).filter(p => p.length > 0);
 
         newsItems = rawPosts.map(post => {
-            let title = "SYSTEM UPDATE";
+            let title = "UPDATE";
             let bodyParts = [];
             post.split('\n').forEach(line => {
                 const cl = line.trim();
@@ -174,166 +175,26 @@ async function fetchNews() {
                 }
                 indicatorsContainer.innerHTML = indicatorsHtml;
             }
-             updateNewsDisplay();
-             startNewsCycle();
+            updateNewsDisplay();
+            setInterval(updateNewsDisplay, 8000);
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("News Error", e); }
 }
 
-function startNewsCycle() {
-    if (newsInterval) clearInterval(newsInterval);
-    newsInterval = setInterval(updateNewsDisplay, 10000);
-}
-
-function stopNewsCycle() { clearInterval(newsInterval); }
-
-if (newsSection) {
-    newsSection.addEventListener('mouseenter', stopNewsCycle);
-    newsSection.addEventListener('mouseleave', startNewsCycle);
-}
-
-// --- SYSTEM STABILITY MONITOR ---
-function initSystemMonitor() {
-    const container = document.querySelector('.status-indicator');
-    if (!container) return; // Safely exit if not on main page
-    const dot = container.querySelector('.status-dot');
-    const textSpan = container.querySelector('.status-text');
-
-    const checkStability = () => {
-        const timeLeft = countdownDate - Date.now();
-        if (timeLeft <= 0) {
-            if(dot) { dot.style.background = "#ff003c"; dot.style.animation = "none"; }
-            if(textSpan) { textSpan.innerText = "CONTAINMENT BROKEN // EVACUATE"; textSpan.style.color = "#ff003c"; }
-            return;
-        }
-
-        const dangerLevel = Math.max(0, Math.min(1, 1 - (timeLeft / (3 * 24 * 60 * 60 * 1000))));
-        if (Math.random() < (0.05 + dangerLevel * 0.9) && dangerLevel > 0.01) {
-            if(dot) dot.style.background = "#ff003c";
-            if(textSpan) {
-                textSpan.innerText = (dangerLevel > 0.8) ? "CRITICAL ERROR // LEAK DETECTED" : "WARNING // PRESSURE RISING";
-                textSpan.style.color = "#ff003c";
-                textSpan.classList.add('glitch-active');
-            }
-            setTimeout(() => {
-                if(dot) dot.style.background = "";
-                if(textSpan) { textSpan.innerText = "CONTAINMENT STABLE // PROTOCOL ACTIVE"; textSpan.style.color = ""; textSpan.classList.remove('glitch-active'); }
-                setTimeout(checkStability, 4000 - (dangerLevel * 3900));
-            }, 100 + (dangerLevel * 1900));
-        } else {
-            setTimeout(checkStability, 2000 - (dangerLevel * 1500));
-        }
-    };
-    checkStability();
-}
-
-initSystemMonitor();
-
-// --- POLL SYSTEM ---
-async function fetchPoll() {
+// --- TICKER ---
+async function initTicker() {
     try {
-        const response = await fetch('Ethos_poll.txt?v=' + Date.now());
+        const response = await fetch('News.txt?v=' + Date.now());
         const text = await response.text();
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const items = text.split('\n').map(i => i.trim()).filter(i => i.length > 0);
+        const separator = "   ///   ";
+        const finalString = items.join(separator);
 
-        let options = [];
-
-        lines.forEach(line => {
-            // Check for Date Format: "6 . 2 . 2026 - 13:15"
-            if (line.match(/^\d{1,2}\s\.\s\d{1,2}\s\.\s\d{4}/)) {
-                try {
-                    const parts = line.split('-');
-                    const datePart = parts[0].trim();
-                    const timePart = parts[1].trim();
-
-                    const dParts = datePart.split('.').map(s => s.trim());
-                    const tParts = timePart.split(':').map(s => s.trim());
-
-                    const newDate = new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1]);
-
-                    if (!isNaN(newDate.getTime())) {
-                        voteEndDate = newDate.getTime();
-                    }
-                } catch(e) { console.log("Date parse error", e); }
-            }
-
-            if (line.startsWith('#')) {
-                const titleEl = document.getElementById('voting-title');
-                if (titleEl) titleEl.innerText = line.replace('#', '').trim();
-            }
-            if (line.startsWith('-')) {
-                const parts = line.replace('-', '').split('=');
-                options.push({ name: parts[0].trim(), count: parseInt(parts[1].trim()) || 0 });
-            }
-        });
-
-        const total = options.reduce((sum, item) => sum + item.count, 0);
-        let html = '';
-        options.sort((a,b) => b.count - a.count).forEach(opt => {
-            const percent = total === 0 ? 0 : Math.round((opt.count / total) * 100);
-            html += `<div class="poll-bar-item">
-                <div class="poll-label"><span>${opt.name}</span><span>${opt.count}</span></div>
-                <div class="poll-track"><div class="poll-fill" style="width:${percent}%"></div></div>
-            </div>`;
-        });
-        const resultsArea = document.getElementById('results-area');
-        if (resultsArea) resultsArea.innerHTML = html;
-
-        // Trigger countdown update immediately to reflect new date
-        updateCountdown();
-
-    } catch (e) { console.error(e); }
+        const tickerEl = document.getElementById('newsTicker');
+        if (tickerEl) tickerEl.innerText = finalString + separator + finalString;
+    } catch (e) { console.log(e); }
 }
 
-initTicker();
+// Init
 fetchNews();
-fetchPoll();
-setInterval(() => { initTicker(); fetchNews(); fetchPoll(); }, 30000);
-
-// --- SMOKE EFFECT (With Safety Check) ---
-const canvas = document.getElementById('smokeCanvas');
-
-if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-    const colors = ["0, 255, 65", "0, 200, 150", "50, 255, 100", "200, 255, 200"];
-
-    function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-    }
-    window.onresize = resize;
-    resize();
-
-    class P {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * w; this.y = Math.random() * h;
-            this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
-            this.s = Math.random() * 300 + 150; this.a = 0; this.l = 0;
-            this.ml = Math.random() * 500 + 500; this.color = colors[Math.floor(Math.random() * colors.length)];
-        }
-        update() {
-            this.x += this.vx; this.y += this.vy; this.l++;
-            this.a = Math.sin((this.l / this.ml) * Math.PI) * 0.15;
-            if (this.l > this.ml || this.x < -this.s || this.x > w + this.s || this.y < -this.s || this.y > h + this.s) this.reset();
-        }
-        draw() {
-            ctx.globalCompositeOperation = 'screen';
-            const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.s);
-            g.addColorStop(0, `rgba(${this.color}, ${this.a})`);
-            g.addColorStop(1, `rgba(${this.color}, 0)`);
-            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2); ctx.fill();
-            ctx.globalCompositeOperation = 'source-over';
-        }
-    }
-
-    for(let i=0; i<12; i++) particles.push(new P());
-
-    function animate() {
-        ctx.clearRect(0, 0, w, h);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-    animate();
-}
+initTicker();

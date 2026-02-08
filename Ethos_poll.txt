@@ -1,6 +1,5 @@
-# Table Tennis?
+# Valentine?
 - Yes = 0
 - No = 0
-- I Don't Care = 0
 
-6 . 2 . 2026 - 13:15
+13 . 2 . 2026 - 10:30
